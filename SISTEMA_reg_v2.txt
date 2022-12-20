@@ -1,0 +1,177 @@
+#define AOUT_PIN A0
+#define analici 100
+int opcio;
+const int pin = 9;
+
+#define echoPin 2
+#define trigPin 3
+long duration;
+int distance;
+
+
+
+//boton
+const int BOTON=7;
+int val;
+
+
+
+#include "DHT.h"
+
+#define DHTPIN 5
+#define DHTTYPE DHT22
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(pin, OUTPUT);
+
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  pinMode(4, INPUT);
+
+  pinMode(BOTON,INPUT);
+
+  dht.begin();
+
+  Serial.print("tria la opcio que vols realitzar: ");
+  Serial.println(")");
+  Serial.print("opcio A: analitzar la humetat ");
+  Serial.println(")");
+  Serial.print("opcio B: analitzar la luminositat ");
+  Serial.println(")");
+  Serial.print("opccio C: regar plantes");
+  Serial.println(")");
+  Serial.print(" opcio D:  a crescut la planta");
+  Serial.println(")");
+  Serial.print(" opcio I:  accedeix a la informacio");
+  Serial.println(")");
+  Serial.print(" opcio T:  temperatura externa i humetat");
+  Serial.println(")");
+  Serial.println(")");
+  Serial.println(")");
+  Serial.print("Pots utilitza el polsador per idicar la opcio de regar");
+  Serial.println(")");
+  
+}
+
+void loop() {
+
+  //boton
+
+  val=digitalRead(BOTON);
+if  (val==HIGH){
+Serial.println(")");
+      Serial.print("Regant... ");
+      Serial.println(")");
+      digitalWrite(pin, HIGH);
+      delay(5000);
+}else{(val==LOW);
+      digitalWrite(pin, LOW);
+     
+      delay(1000);}
+
+
+
+
+
+  if (Serial.available() > 0) {
+    //leemos la opcion enviada
+    opcio = Serial.read();
+
+    if (opcio == 'I') {
+      Serial.print("tria la opcio que vols realitzar: ");
+      Serial.println(")");
+      Serial.print("opcio A: analitzar la humetat ");
+      Serial.println(")");
+      Serial.print("opcio B: analitzar la luminositat ");
+      Serial.println(")");
+      Serial.print("opccio C: regar plantes");
+      Serial.println(")");
+      Serial.print(" opcio D:  a crescut la planta");
+      Serial.println(")");
+      Serial.print(" opcio I:  accedeix a la informacio");
+      Serial.println(")");
+      Serial.print(" opcio T:  temperatura externa i humetat");
+      Serial.println(")");
+    }
+    if (opcio == 'A') {
+      int valor = analogRead(AOUT_PIN);
+
+      if (valor < analici)
+        Serial.print("el terra esta sec: (");
+      else
+        Serial.print("el terra esa humit: (");
+
+      Serial.print(valor);
+      Serial.println(")");
+
+
+      delay(500);
+    }
+
+    if (opcio == 'B') {
+
+      int valorLDR = 0;
+      int pinLDR = A2;
+
+      valorLDR = analogRead(pinLDR);
+      Serial.println(valorLDR);
+      delay(50);
+
+
+
+    }
+
+    if (opcio == 'C') {
+       Serial.println(")");
+      Serial.print("Regant... ");
+      Serial.println(")");
+      digitalWrite(pin, HIGH);
+      delay(5000);
+      digitalWrite(pin, LOW);
+      delay(5000);
+     
+    }
+
+
+    if (opcio == 'D') {
+
+      digitalWrite(trigPin, LOW);
+      delayMicroseconds(2);
+
+      digitalWrite(trigPin, HIGH);
+      delayMicroseconds(10);
+      digitalWrite(trigPin, LOW);
+
+      duration = pulseIn(echoPin, HIGH);
+
+      distance = duration * 0.034 / 2;
+
+      Serial.print("Distance: ");
+      Serial.print(distance);
+      Serial.println(" cm");
+    }
+
+    if (opcio == 'T') {
+      delay(2000);
+      float h = dht.readHumidity();
+
+      float t = dht.readTemperature();
+
+      Serial.print("humetat exterior: ");
+      Serial.print(h);
+      Serial.print(" %\t");
+      Serial.print("temperatura exterior: ");
+      Serial.print(t);
+      Serial.println(" *C ");
+
+    }
+  }
+
+
+  
+
+
+}
